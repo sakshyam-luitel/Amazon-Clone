@@ -110,11 +110,10 @@ products.forEach((product) =>{
     //multiple same buttons clicked differentiator
     
     document.querySelectorAll('.js-add-to-cart').forEach((button) => {
-      //console.log(button);
+      
       button.addEventListener('click',() => {
         //console.log(button.dataset);
         const productId = button.dataset.productId;
-
           addToCart(productId);
           //console.log(cart);
          updateCartQuantity();
