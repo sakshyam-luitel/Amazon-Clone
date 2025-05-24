@@ -6,8 +6,9 @@ import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import {deliveryOptions} from '../data/deliveryOptions.js';
 
 
-let cartSummaryHTML = '';
 
+function renderOrderSummary(){
+  let cartSummaryHTML = '';
 cart.forEach((cartItem)=>{
     const productId = cartItem.productId;
 
@@ -20,26 +21,12 @@ cart.forEach((cartItem)=>{
         }
     });
 
-    const deliveryOptionId = cartItem.deliveryOptionId;
-    let deliveryOption;
-
-    deliveryOptions.forEach((option) => {
-      if(option.id === deliveryOptionId)
-      {
-        deliveryOption = option;
-      }
-    });
-
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays,'days');
-    const dateString = deliveryDate.format('dddd,MMMM,D');
-
-  
+      
 
     cartSummaryHTML +=
     `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
-              Delivery date: ${dateString}
+              Delivery date: 1
             </div>
 
             <div class="cart-item-details-grid">
@@ -75,13 +62,33 @@ cart.forEach((cartItem)=>{
               <div class="delivery-options">
                 <div class="delivery-options-title">
                   Choose a delivery option:
-                </div>
+                </div class = "js-delivery-option">
                 
              ${deliveryOptionsHTML(matchingProduct , cartItem)}
               </div>
             </div>
           </div>`;
 });
+
+function getDateString(cartItem , deliveryOptions1)
+{
+
+      const deliveryOptionId = cartItem.deliveryOptionId;
+      let deliveryOption;
+
+      deliveryOptions1.forEach((option) => { 
+                                              if(option.id === deliveryOptionId)
+                                              {
+                                                deliveryOption = option;
+                                              }
+        
+                                            });
+      const today = dayjs();
+      const deliveryDate = today.add(deliveryOption.deliveryDays,'days');
+      const dateString = deliveryDate.format('dddd,MMMM,D');
+
+      return dateString;
+}
 
 
 
@@ -176,3 +183,7 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
       });
     });
   });
+}
+
+renderOrderSummary();
+  
