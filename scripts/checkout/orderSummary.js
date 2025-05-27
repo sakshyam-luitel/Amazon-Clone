@@ -1,9 +1,9 @@
 import {cart,removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption} from '../../data/cart.js'; //named exports
-import {products} from '../../data/products.js';
+import {products,getProduct} from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 //default export
-import {deliveryOptions} from '../../data/deliveryOptions.js';
+import {deliveryOptions,getDeliveryOption} from '../../data/deliveryOptions.js';
 
 
 
@@ -11,22 +11,12 @@ export function renderOrderSummary(){
   let cartSummaryHTML = '';
 cart.forEach((cartItem)=>{
     const productId = cartItem.productId;
-
-    let matchingProduct;
-
-    products.forEach((product) => {
-        if(product.id === productId)
-        {
-            matchingProduct = product;
-        }
-    });
-
-      
+    const matchingProduct = getProduct(productId);
 
     cartSummaryHTML +=
     `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
-              Delivery date: ${getDateString(cartItem,deliveryOptions)}
+              Delivery date: ${getDateString(cartItem , deliveryOptions)}
             </div>
 
             <div class="cart-item-details-grid">
@@ -74,15 +64,7 @@ function getDateString(cartItem , deliveryOptions)
 {
 
       const deliveryOptionId = cartItem.deliveryOptionsId;
-      let option;
-    
-      deliveryOptions.forEach((deliveryOption) => { 
-                                              if(deliveryOption.id === deliveryOptionId)
-                                              {
-                                                option = deliveryOption;
-                                              }
-        
-                                            });
+      const option = getDeliveryOption(deliveryOptionId);
 
       const today = dayjs();
       const deliveryDate = today.add(option.deliveryDays,'days');
@@ -106,19 +88,20 @@ function deliveryOptionsHTML(matchingProduct,cartItem)
 
     const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
 
-   html+= `<div class="delivery-option js-delivery-option" data-product-id = "${matchingProduct.id}" data-delivery-option-id = "${deliveryOption.id}">
-                    <input type="radio" ${isChecked ? 'checked' : ''}
-                      class="delivery-option-input"
-                      name="delivery-option-${matchingProduct.id}">
-                    <div>
-                      <div class="delivery-option-date">
-                        ${dateString}
-                      </div>
-                      <div class="delivery-option-price">
-                        ${priceString}
-                      </div>
-                    </div>
-                  </div>`
+    html+= `
+    <div class="delivery-option js-delivery-option" data-product-id = "${matchingProduct.id}" data-delivery-option-id = "${deliveryOption.id}">
+      <input type="radio" ${isChecked ? 'checked' : ''}
+        class="delivery-option-input"
+        name="delivery-option-${matchingProduct.id}">
+      <div>
+        <div class="delivery-option-date">
+          ${dateString}
+        </div>
+        <div class="delivery-option-price">
+          ${priceString}
+        </div>
+      </div>
+    </div>`
   });
 return html;
 }
