@@ -166,6 +166,7 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
         }
         
       });
+      renderPaymentSummary();
     });
   });
 
@@ -174,6 +175,9 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
 
       const productId = element.dataset.productId;
       const deliveryOptionId = element.dataset.deliveryOptionId;
+      console.log(productId);
+      console.log(deliveryOptionId);
+
       updateDeliveryOption(productId , deliveryOptionId);
       renderOrderSummary();
       renderPaymentSummary();

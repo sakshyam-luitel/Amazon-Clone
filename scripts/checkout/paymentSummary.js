@@ -12,7 +12,7 @@ cart.forEach((cartItem) => {
     const product = getProduct(cartItem.productId);
     productPriceCents += product.priceCents * cartItem.quantity;
 
-    const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
+    const deliveryOption = getDeliveryOption(cartItem.deliveryOptionsId);
     shippingPriceCents += deliveryOption.priceCents;
 
 });
