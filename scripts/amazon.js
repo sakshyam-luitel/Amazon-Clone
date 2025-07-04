@@ -38,9 +38,13 @@
 
 ];*/
 import {cart,addToCart,calculateCartQuantity} from '../data/cart.js';
-import {products} from '../data/products.js';
+import {products , loadProducts} from '../data/products.js';
 import { formatCurrency } from './utils/money.js';
 
+loadProducts(renderProductsGrid);
+
+
+function renderProductsGrid(){
 let productsHTML = '';
 products.forEach((product) =>{
     productsHTML +=`
@@ -93,10 +97,12 @@ products.forEach((product) =>{
           </button>
         </div>`
     });
+    
+    document.querySelector('.js-products-grid').innerHTML = productsHTML;
+
+  }
 
     //console.log(productsHTML);
-
-    document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
     //multiple same buttons clicked differentiator
     
