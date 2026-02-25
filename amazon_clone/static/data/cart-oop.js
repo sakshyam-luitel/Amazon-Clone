@@ -44,6 +44,7 @@ const cart = {
           }
           console.log(cart);
           this.saveToStorage();
+
     },
      removeFromCart(productId)
     {

@@ -3,7 +3,9 @@ import { getProduct } from '../../data/products.js';
 import { getDeliveryOption } from '../../data/deliveryOptions.js';
 import { formatCurrency } from '../utils/money.js';
 
-export function renderPaymentSummary(){
+// fetch('api/v1/cart').then((response) =>{return response.json})
+
+export function renderPaymentSummary(cart){
 
     let productPriceCents = 0;
     let shippingPriceCents = 0;
@@ -51,9 +53,11 @@ const paymentSummaryHTML = `
             <div class="payment-summary-money">$${formatCurrency(totalCents)}</div>
           </div>
 
-          <button class="place-order-button button-primary">
-            Place your order
-          </button>`;
+          <button class="place-order-button button-primary js-place-order-button">
+            Place your order </button>`;
 
     document.querySelector('.js-payment-summary').innerHTML = paymentSummaryHTML;
+
 }
+
+//renderPaymentSummary(cart);

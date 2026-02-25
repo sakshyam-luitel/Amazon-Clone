@@ -1,5 +1,5 @@
-import {cart,removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption} from '../../data/cart.js'; //named exports
-import {products,getProduct} from '../../data/products.js';
+import {removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption} from '../../data/cart.js'; //named exports
+import {getProduct} from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 //default export
@@ -7,9 +7,10 @@ import {deliveryOptions,getDeliveryOption} from '../../data/deliveryOptions.js';
 import { renderPaymentSummary } from './paymentSummary.js';
 
 
-export function renderOrderSummary(){
+export function renderOrderSummary(cartData){
   let cartSummaryHTML = '';
-cart.forEach((cartItem)=>{
+  cartData.forEach((cartItem)=>{
+
     const productId = cartItem.productId;
     const matchingProduct = getProduct(productId);
 
@@ -21,7 +22,7 @@ cart.forEach((cartItem)=>{
 
             <div class="cart-item-details-grid">
               <img class="product-image"
-                src="${matchingProduct.image}">
+                src="/static/${matchingProduct.image}">
 
               <div class="cart-item-details">
                 <div class="product-name">
@@ -122,7 +123,7 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
       const cartQuantity1 = calculateCartQuantity();
       document.querySelector('.js-return-to-home').innerHTML = `${cartQuantity1} items`;
 
-      renderPaymentSummary();
+      renderPaymentSummary(cart);
     });
   });
 
@@ -166,7 +167,7 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
         }
         
       });
-      renderPaymentSummary();
+      renderPaymentSummary(cart);
     });
   });
 
@@ -175,15 +176,14 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
 
       const productId = element.dataset.productId;
       const deliveryOptionId = element.dataset.deliveryOptionId;
+      const fetchedCart = cart;
       console.log(productId);
       console.log(deliveryOptionId);
 
-      updateDeliveryOption(productId , deliveryOptionId);
-      renderOrderSummary();
-      renderPaymentSummary();
+      updateDeliveryOption(productId , deliveryOptionId,fetchedCart);
+      renderOrderSummary(fetchedCart);
+      renderPaymentSummary(fetchedCart);
     });
   });
 }
-
-renderOrderSummary();
   

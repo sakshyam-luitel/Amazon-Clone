@@ -7,9 +7,26 @@ class Cart{
         this.loadFromStorage();
         }
 
-    loadFromStorage = function(){
-    this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey))|| 
-    [
+    // loadFromStorage = function(){
+    // this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey))|| 
+    // [
+    // {
+    //     productId :'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+    //     quantity :2,
+    //     deliveryOptionsId  : '1'
+    // },
+    // {
+    //     productId : '15b6fc6f-327a-4ec4-896f-486349e85a3d',
+    //     quantity : 1,
+    //     deliveryOptionsId : '2'
+    // }
+    // ];
+    // }
+
+    loadFromStorage = function() {
+      const cartPromise = fetch('api/products').then((response) =>{return response.json()});     
+      this.cartItems = cartPromise||
+      [
     {
         productId :'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
         quantity :2,
@@ -51,7 +68,26 @@ class Cart{
           }
           console.log(cart);
           this.saveToStorage();
+
+          const fetchPromise = fetch('api/products/',
+            {
+              method : 'POST' , 
+              headers : {'Content-Type' : 'application/json'},
+              body : JSON.stringify({
+                productId : productId , 
+                quantity : quantity,
+                deliveryOptionId : deliveryOptionId
+              })
+            }
+          ).then((response) =>{response.json()});
+
+
+          fetchPromise.then((resolve) =>{
+            
+          });
     }
+
+      }
 
     removeFromCart(productId)
     {
