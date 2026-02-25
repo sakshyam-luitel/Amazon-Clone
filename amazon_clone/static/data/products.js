@@ -40,14 +40,7 @@ const product1 = new Product({
       "apparel"
     ]
   }
-<<<<<<< HEAD:data/products.js
-  );
-  console.log(product1);
-``
-=======
-);
 
->>>>>>> 9414021 (Added add to cart and remove from the cart functionality):amazon_clone/static/data/products.js
 export function getProduct(productId) {
    let matchingProduct;
 
@@ -60,7 +53,6 @@ export function getProduct(productId) {
     return matchingProduct;
 }
 
-<<<<<<< HEAD:data/products.js
 export let products = [];
 
 export function loadProducts(renderProductsGrid){
@@ -744,6 +736,8 @@ export function loadProducts(renderProductsGrid){
 //   return new Product(productDetails);  
 // });
 =======
+=======
+>>>>>>> 94140214bf486f654c844c3ab610a292091432c6
 
 export const products = [
   {
@@ -1407,4 +1401,7 @@ export const products = [
 ].map((productDetails) => {
   return new Product(productDetails);  
 });
+<<<<<<< HEAD
 >>>>>>> 9414021 (Added add to cart and remove from the cart functionality):amazon_clone/static/data/products.js
+=======
+>>>>>>> 94140214bf486f654c844c3ab610a292091432c6

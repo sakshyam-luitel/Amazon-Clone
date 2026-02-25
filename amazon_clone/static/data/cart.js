@@ -143,7 +143,6 @@ export async function addToCart(productId, quantity, deliveryOptionId){
 
   export async function updateCart(){
     try{
-      
     }catch(error){
 
     }
