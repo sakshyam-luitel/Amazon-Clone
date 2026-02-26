@@ -1,16 +1,16 @@
-import {cart} from '../../data/cart.js';
 import { getProduct } from '../../data/products.js';
 import { getDeliveryOption } from '../../data/deliveryOptions.js';
 import { formatCurrency } from '../utils/money.js';
 
 // fetch('api/v1/cart').then((response) =>{return response.json})
 
-export function renderPaymentSummary(cart){
+
+export function renderPaymentSummary(cartData){
 
     let productPriceCents = 0;
     let shippingPriceCents = 0;
 
-cart.forEach((cartItem) => {
+cartData.forEach((cartItem) => {
     const product = getProduct(cartItem.productId);
     productPriceCents += product.priceCents * cartItem.quantity;
 

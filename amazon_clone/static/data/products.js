@@ -39,7 +39,7 @@ const product1 = new Product({
       "sports",
       "apparel"
     ]
-  }
+  })
 
 export function getProduct(productId) {
    let matchingProduct;
@@ -53,7 +53,6 @@ export function getProduct(productId) {
     return matchingProduct;
 }
 
-export let products = [];
 
 export function loadProducts(renderProductsGrid){
   const xhr = new XMLHttpRequest();
@@ -735,9 +734,6 @@ export function loadProducts(renderProductsGrid){
 // ].map((productDetails) => {
 //   return new Product(productDetails);  
 // });
-=======
-=======
->>>>>>> 94140214bf486f654c844c3ab610a292091432c6
 
 export const products = [
   {
@@ -1401,7 +1397,3 @@ export const products = [
 ].map((productDetails) => {
   return new Product(productDetails);  
 });
-<<<<<<< HEAD
->>>>>>> 9414021 (Added add to cart and remove from the cart functionality):amazon_clone/static/data/products.js
-=======
->>>>>>> 94140214bf486f654c844c3ab610a292091432c6

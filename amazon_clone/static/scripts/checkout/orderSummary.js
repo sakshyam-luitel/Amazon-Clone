@@ -1,4 +1,4 @@
-import {removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption} from '../../data/cart.js'; //named exports
+import {removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption,updateCart} from '../../data/cart.js'; //named exports
 import {getProduct} from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
@@ -129,23 +129,20 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
 
 
   document.querySelectorAll('.js-update-quantity-link').forEach((updateLink) => {
-    updateLink.addEventListener('click' , () => {
+    updateLink.addEventListener('click' , async() => {
 
       const productId = updateLink.dataset.productId; 
 
       const container  = document.querySelector( `.js-cart-item-container-${productId}`);
       container.classList.add('is-editing-input');
-    
-      // document.querySelector(`.js-update-quantity-link-${productId}`).innerHTML =
-      // `Update ${textBoxHTML}`;
-
+      
     });
  }); 
 
  document.querySelectorAll('.js-save-link')
   .forEach((saveLink) => {
 
-    saveLink.addEventListener('click', () => {
+    saveLink.addEventListener('click',async () => {
       const productId = saveLink.dataset.productId;
 
       const container = document.querySelector(
@@ -157,17 +154,10 @@ document.querySelectorAll('.js-delete-link').forEach((link)=>
         `.js-quantity-input-${productId}`
       );
       const newQuantity = Number(quantityInput.value);
-      cart.forEach((cartItem)=>{
-        if(cartItem.productId === productId)
-        {
-          cartItem.quantity = newQuantity;
-          const cartItemQuantity = cartItem.quantity;
-        saveToStorage();
-        document.querySelector(`.js-quantity-label-${productId}`).innerHTML = cartItemQuantity; 
-        }
-        
-      });
-      renderPaymentSummary(cart);
+      await updateCart(productId , newQuantity)
+
+      renderOrderSummary(cartData)
+      renderPaymentSummary(cartData);
     });
   });
 
