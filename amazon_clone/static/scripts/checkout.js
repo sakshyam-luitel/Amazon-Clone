@@ -1,14 +1,7 @@
 import { renderOrderSummary } from "./checkout/orderSummary.js";
 import { renderPaymentSummary } from "./checkout/paymentSummary.js";
 
-
-// fetch('/api/v1/cart').then((response) => {return response.json()}).then((cartData)=>{
-//     const cart = cartData;
-//     renderOrderSummary(cart);
-//     renderPaymentSummary(cart);
-// })
-
-async function getCartData(){
+export async function getCartData(){
     try{
     const response = await fetch('/api/v1/cart/')
     if(!response.ok){

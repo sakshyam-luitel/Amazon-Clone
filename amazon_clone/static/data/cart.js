@@ -32,14 +32,9 @@ export async function addToCart(productId, quantity, deliveryOptionId) {
         deliveryOptionId: deliveryOptionId,
       }),
     });
-    console.log(response);
     if (!response.ok) {
       throw new Error("Failed to create new cart Item");
     }
-
-    const data = await response.json();
-    console.log("Server response:", data);
-    return data;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -48,15 +43,15 @@ export async function addToCart(productId, quantity, deliveryOptionId) {
 export async function removeFromCart(productId) {
   try {
     const response = await fetch(`/api/v1/cart/${productId}/`, {
-      method: "delete",
-      "Content-Type": "application/json",
+      method: "DELETE",
+      headers :{
+        "Content-Type":"application/json",
+        "X-CSRFToken":csrftoken,
+      }
     });
     if (!response.ok) {
       throw new Error("Failed to delete item from cart");
     }
-    const data = await response.json();
-    console.log("Server Response:", data);
-    return data;
   } catch (error) {
     console.log("Error:", error);
   }

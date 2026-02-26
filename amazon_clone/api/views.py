@@ -61,7 +61,7 @@ def cart_details(request, pk):
     elif request.method == 'DELETE':
         cart_data = Cart.objects.get(pk = pk)
         cart_data.delete()
-        return Response(status = status.HTTP_404_NOT_FOUND)
+        return Response(status = status.HTTP_204_NO_CONTENT)
     elif request.method == "GET":
         serializer = CartSerializer(cart_data)
         return Response(serializer.data , status = status.HTTP_200_OK)

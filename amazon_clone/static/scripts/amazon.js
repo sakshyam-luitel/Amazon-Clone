@@ -65,8 +65,7 @@ product.then((products) => {
     button.addEventListener("click", async () => {
 
       const productId = button.dataset.productId;
-      console.log(productId);
-
+      
       const quantity = Number(
         document.querySelector(`.js-product-quantity-selector-${productId}`).value
       );
