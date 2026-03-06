@@ -4,22 +4,29 @@ import {
   calculateCartQuantity,
   updateDeliveryOption,
   updateCart,
-} from "../../data/cart.js"; //named exports
+} from "../../data/cart.js";
+
 import { getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
+
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
-//default export
+
 import {
   deliveryOptions,
   getDeliveryOption,
 } from "../../data/deliveryOptions.js";
+
 import { renderPaymentSummary } from "./paymentSummary.js";
 
 export async function renderOrderSummary(cartData) {
   let cartSummaryHTML = "";
-  cartData.forEach((cartItem) => {
+
+  // ✅ FIXED PART (forEach -> for...of)
+  for (const cartItem of cartData) {
     const productId = cartItem.productId;
-    const matchingProduct = getProduct(productId);
+    const matchingProduct = await getProduct(productId);
+
+    console.log(matchingProduct);
 
     cartSummaryHTML += `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
@@ -35,7 +42,7 @@ export async function renderOrderSummary(cartData) {
                   ${matchingProduct.name}
                 </div>
                 <div class="product-price">
-                  ${matchingProduct.getPrice()}
+                  $${formatCurrency(matchingProduct.priceCents)}
                 </div>
                 <div class="product-quantity">
                   <span>
@@ -65,7 +72,9 @@ export async function renderOrderSummary(cartData) {
               </div>
             </div>
           </div>`;
-  });
+  }
+
+  document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
 
   function getDateString(cartItem) {
     const deliveryOptionId = cartItem.deliveryOptionId;
@@ -85,7 +94,6 @@ export async function renderOrderSummary(cartData) {
       const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
       const dateString = deliveryDate.format("dddd, MMMM D");
 
-      //ternary operator
       const priceString =
         deliveryOption.priceCents === 0
           ? "FREE Shipping"
@@ -112,8 +120,6 @@ export async function renderOrderSummary(cartData) {
     return html;
   }
 
-  document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
-
   const totalCartQuantity = await calculateCartQuantity();
   document.querySelector(".js-return-to-home").innerHTML =
     `${totalCartQuantity} items`;
@@ -126,7 +132,7 @@ export async function renderOrderSummary(cartData) {
       removeFromCart(productId);
 
       const container = document.querySelector(
-        `.js-cart-item-container-${productId}`,
+        `.js-cart-item-container-${productId}`
       );
       container.remove();
 
@@ -148,7 +154,7 @@ export async function renderOrderSummary(cartData) {
         const productId = updateLink.dataset.productId;
 
         const container = document.querySelector(
-          `.js-cart-item-container-${productId}`,
+          `.js-cart-item-container-${productId}`
         );
         container.classList.add("is-editing-input");
       });
@@ -159,12 +165,12 @@ export async function renderOrderSummary(cartData) {
       const productId = saveLink.dataset.productId;
 
       const container = document.querySelector(
-        `.js-cart-item-container-${productId}`,
+        `.js-cart-item-container-${productId}`
       );
       container.classList.remove("is-editing-input");
 
       const quantityInput = document.querySelector(
-        `.js-quantity-input-${productId}`,
+        `.js-quantity-input-${productId}`
       );
       const newQuantity = Number(quantityInput.value);
       await updateCart(productId, newQuantity);
