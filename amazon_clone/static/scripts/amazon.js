@@ -72,8 +72,8 @@ product.then((products) => {
 
       await addToCart(productId, quantity, 1);
 
-      const cartQuantity2 = calculateCartQuantity();
-      document.querySelector(".js-cart-quantity").innerHTML = cartQuantity2;
+      const totalCartQuantity= await calculateCartQuantity();
+      document.querySelector(".js-cart-quantity").innerHTML = totalCartQuantity;
 
       const messageElement = document.querySelector(
         `.js-added-to-cart-${productId}`,

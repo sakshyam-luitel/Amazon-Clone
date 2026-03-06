@@ -1,23 +1,29 @@
-import {getCart,removeFromCart, calculateCartQuantity,saveToStorage,updateDeliveryOption,updateCart} from '../../data/cart.js'; //named exports
-import {getProduct} from '../../data/products.js';
-import { formatCurrency } from '../utils/money.js';
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+import {
+  getCart,
+  removeFromCart,
+  calculateCartQuantity,
+  updateDeliveryOption,
+  updateCart,
+} from "../../data/cart.js"; //named exports
+import { getProduct } from "../../data/products.js";
+import { formatCurrency } from "../utils/money.js";
+import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 //default export
-import {deliveryOptions,getDeliveryOption} from '../../data/deliveryOptions.js';
-import { renderPaymentSummary } from './paymentSummary.js';
+import {
+  deliveryOptions,
+  getDeliveryOption,
+} from "../../data/deliveryOptions.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
 
-
-export function renderOrderSummary(cartData){
-  let cartSummaryHTML = '';
-  cartData.forEach((cartItem)=>{
-
+export async function renderOrderSummary(cartData) {
+  let cartSummaryHTML = "";
+  cartData.forEach((cartItem) => {
     const productId = cartItem.productId;
     const matchingProduct = getProduct(productId);
 
-    cartSummaryHTML +=
-    `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
+    cartSummaryHTML += `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
-              Delivery date: ${getDateString(cartItem , deliveryOptions)}
+              Delivery date: ${getDateString(cartItem)}
             </div>
 
             <div class="cart-item-details-grid">
@@ -55,43 +61,42 @@ export function renderOrderSummary(cartData){
                   Choose a delivery option:
                 </div>
                 
-             ${deliveryOptionsHTML(matchingProduct , cartItem)}
+             ${deliveryOptionsHTML(matchingProduct, cartItem)}
               </div>
             </div>
           </div>`;
-});
+  });
 
-function getDateString(cartItem , deliveryOptions)
-{
+  function getDateString(cartItem) {
+    const deliveryOptionId = cartItem.deliveryOptionId;
+    const option = getDeliveryOption(deliveryOptionId);
 
-      const deliveryOptionId = cartItem.deliveryOptionsId;
-      const option = getDeliveryOption(deliveryOptionId);
-
-      const today = dayjs();
-      const deliveryDate = today.add(option.deliveryDays,'days');
-      const dateString = deliveryDate.format('dddd, MMMM D');
-
-      return dateString;
-}
-
-
-
-function deliveryOptionsHTML(matchingProduct,cartItem)
-{
-  let html = '';
-  deliveryOptions.forEach((deliveryOption)=>{
     const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays,'days');
-    const dateString = deliveryDate.format('dddd, MMMM D');
+    const deliveryDate = today.add(option.deliveryDays, "days");
+    const dateString = deliveryDate.format("dddd, MMMM D");
 
-    //ternary operator
-    const priceString = deliveryOption.priceCents === 0 ?'FREE Shipping' :`$${formatCurrency(deliveryOption.priceCents)} - Shipping`;
+    return dateString;
+  }
 
-    const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
+  function deliveryOptionsHTML(matchingProduct, cartItem) {
+    let html = "";
+    deliveryOptions.forEach((deliveryOption) => {
+      const today = dayjs();
+      const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+      const dateString = deliveryDate.format("dddd, MMMM D");
 
-    html+= `
+      //ternary operator
+      const priceString =
+        deliveryOption.priceCents === 0
+          ? "FREE Shipping"
+          : `$${formatCurrency(deliveryOption.priceCents)} - Shipping`;
+
+      const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
+
+      html += `
     <div class="delivery-option js-delivery-option" data-product-id = "${matchingProduct.id}" data-delivery-option-id = "${deliveryOption.id}">
-      <input type="radio" ${isChecked ? 'checked' : ''}
+      <input type="radio"
+        ${isChecked ? "checked" : ""}
         class="delivery-option-input"
         name="delivery-option-${matchingProduct.id}">
       <div>
@@ -102,85 +107,88 @@ function deliveryOptionsHTML(matchingProduct,cartItem)
           ${priceString}
         </div>
       </div>
-    </div>`
-  });
-return html;
-}
+    </div>`;
+    });
+    return html;
+  }
 
-document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+  document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
 
+  const totalCartQuantity = await calculateCartQuantity();
+  document.querySelector(".js-return-to-home").innerHTML =
+    `${totalCartQuantity} items`;
 
-
-document.querySelectorAll('.js-delete-link').forEach((link)=>
-  {
-    link.addEventListener('click',async (event) =>{
+  document.querySelectorAll(".js-delete-link").forEach((link) => {
+    link.addEventListener("click", async (event) => {
       event.preventDefault();
 
       const productId = link.dataset.productId;
       removeFromCart(productId);
-      
-      const container = document.querySelector(`.js-cart-item-container-${productId}`);
+
+      const container = document.querySelector(
+        `.js-cart-item-container-${productId}`,
+      );
       container.remove();
 
-      const cartQuantity1 = calculateCartQuantity();
-      document.querySelector('.js-return-to-home').innerHTML = `${cartQuantity1} items`;
-      
-      const cartData2 = await getCart()
+      const totalCartQuantity = await calculateCartQuantity();
+      document.querySelector(".js-return-to-home").innerHTML =
+        `${totalCartQuantity} items`;
 
-      renderOrderSummary(cartData2)
+      const cartData2 = await getCart();
+
+      renderOrderSummary(cartData2);
       renderPaymentSummary(cartData2);
     });
   });
 
+  document
+    .querySelectorAll(".js-update-quantity-link")
+    .forEach((updateLink) => {
+      updateLink.addEventListener("click", async () => {
+        const productId = updateLink.dataset.productId;
 
-  document.querySelectorAll('.js-update-quantity-link').forEach((updateLink) => {
-    updateLink.addEventListener('click' , async() => {
-
-      const productId = updateLink.dataset.productId; 
-
-      const container  = document.querySelector( `.js-cart-item-container-${productId}`);
-      container.classList.add('is-editing-input');
-      
+        const container = document.querySelector(
+          `.js-cart-item-container-${productId}`,
+        );
+        container.classList.add("is-editing-input");
+      });
     });
- }); 
 
- document.querySelectorAll('.js-save-link')
-  .forEach((saveLink) => {
-
-    saveLink.addEventListener('click',async () => {
+  document.querySelectorAll(".js-save-link").forEach((saveLink) => {
+    saveLink.addEventListener("click", async () => {
       const productId = saveLink.dataset.productId;
 
       const container = document.querySelector(
-        `.js-cart-item-container-${productId}`
+        `.js-cart-item-container-${productId}`,
       );
-      container.classList.remove('is-editing-input');
+      container.classList.remove("is-editing-input");
 
       const quantityInput = document.querySelector(
-        `.js-quantity-input-${productId}`
+        `.js-quantity-input-${productId}`,
       );
       const newQuantity = Number(quantityInput.value);
-      await updateCart(productId , newQuantity)
+      await updateCart(productId, newQuantity);
+
+      const totalCartQuantity = await calculateCartQuantity();
+      document.querySelector(".js-return-to-home").innerHTML =
+        `${totalCartQuantity} items`;
 
       const cartData1 = await getCart();
 
-      renderOrderSummary(cartData1)
+      renderOrderSummary(cartData1);
       renderPaymentSummary(cartData1);
     });
   });
 
-  document.querySelectorAll('.js-delivery-option').forEach((element)=>{
-    element.addEventListener('click', () => {
-
+  document.querySelectorAll(".js-delivery-option").forEach((element) => {
+    element.addEventListener("click", async () => {
       const productId = element.dataset.productId;
       const deliveryOptionId = element.dataset.deliveryOptionId;
-      const fetchedCart = cart;
-      console.log(productId);
-      console.log(deliveryOptionId);
+      const cartData = await getCart();
 
-      updateDeliveryOption(productId , deliveryOptionId,fetchedCart);
-      renderOrderSummary(fetchedCart);
-      renderPaymentSummary(fetchedCart);
+      updateDeliveryOption(productId, deliveryOptionId, cartData);
+      renderOrderSummary(cartData);
+      renderPaymentSummary(cartData);
     });
   });
 }
-  

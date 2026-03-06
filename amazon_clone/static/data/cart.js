@@ -1,4 +1,4 @@
-const csrftoken = getCookie("csrftoken")
+const csrftoken = getCookie("csrftoken");
 
 export async function getCart() {
   try {
@@ -16,7 +16,6 @@ export async function getCart() {
 export function saveToStorage() {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
-
 
 export async function addToCart(productId, quantity, deliveryOptionId) {
   try {
@@ -44,10 +43,10 @@ export async function removeFromCart(productId) {
   try {
     const response = await fetch(`/api/v1/cart/${productId}/`, {
       method: "DELETE",
-      headers :{
-        "Content-Type":"application/json",
-        "X-CSRFToken":csrftoken,
-      }
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
     });
     if (!response.ok) {
       throw new Error("Failed to delete item from cart");
@@ -63,7 +62,7 @@ export async function updateCart(productId, quantity) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken":csrftoken,
+        "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({
         quantity: quantity,
@@ -78,32 +77,53 @@ export async function updateCart(productId, quantity) {
 }
 
 export async function calculateCartQuantity() {
-  let cartQuantity = 0;
-  try{
-    const response = await fetch('/api/v1/cart/')
-    if(!response.ok){
-      console.log('Failed to get cart Data')
+  try {
+    let cartQuantity = 0;
+    const response = await fetch("/api/v1/cart/");
+    if (!response.ok) {
+      console.log("Failed to get cart Data");
     }
-    const cartData = await response.json()
+    const cartData = await response.json();
     cartData.forEach((cartItem) => {
-    cartQuantity += cartItem.quantity;
-  });
-  return cartQuantity;
-  }catch(error){
-    console.log("Error:", error)
+      cartQuantity += cartItem.quantity;
+    });
+    return cartQuantity;
+  } catch (error) {
+    console.log("Error:", error);
   }
 }
 
-export function updateDeliveryOption(productId, deliveryOptionId, cart) {
+export async function updateDeliveryOption(
+  productId,
+  deliveryOptionId,
+  cartData,
+) {
   let matchingItem;
-  cart.forEach((cartItem) => {
+  cartData.forEach((cartItem) => {
     if (productId === cartItem.productId) {
       matchingItem = cartItem;
     }
   });
 
-  matchingItem.deliveryOptionsId = deliveryOptionId;
+  matchingItem.deliveryOptionId = deliveryOptionId;
   //saveToStorage();
+  try {
+    const response = await fetch(`/api/v1/cart/${matchingItem.productId}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        deliveryOptionId: deliveryOptionId,
+      }),
+    });
+    if (!response.ok) {
+      console.log("Failed to update DeliveryOptionId");
+    }
+  } catch (error) {
+    console.log("Error:", error);
+  }
 }
 
 function getCookie(name) {

@@ -8,7 +8,7 @@ export async function getCartData(){
         throw new Error('Failed to fetch the cart data')
     }
     const cartData = await response.json()
-    renderOrderSummary(cartData)
+    await renderOrderSummary(cartData)
     renderPaymentSummary(cartData)
     }
     catch(error){
