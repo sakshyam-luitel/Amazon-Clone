@@ -1,17 +1,37 @@
 import {addToCart, calculateCartQuantity } from "../data/cart.js";
 import { formatCurrency } from "./utils/money.js";
 
-const product = fetch("api/v1/products/").then((response) => {
-  return response.json();
-});
+// const product = fetch("api/v1/products/").then((response) => {
+//   return response.json();
+// });
 
-product.then((products) => {
+async function getProducts(){
+  try{
+    const response = await fetch('/api/v1/products/')
+    if(!response.ok){
+      console.log('Failed to fetch products data')
+    }
+    const productsData = await response.json()
+
+    return productsData
+  }catch(error){
+    console.log("Error:", error)
+  }
+}
+
+const totalCartQuantity = await calculateCartQuantity()
+document.querySelector('.js-cart-quantity').innerHTML = totalCartQuantity;
+
+const products = await getProducts()
+console.log(products)
+
+// products.then((product) => {
   let productsHTML = "";
   products.forEach((product) => {
     productsHTML += `<div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
-              src="static/${product.image}">
+              src="/static/${product.image}">
           </div>
 
           <div class="product-name limit-text-to-2-lines">
@@ -85,4 +105,4 @@ product.then((products) => {
       }, 2000);
     });
   });
-});
+// });

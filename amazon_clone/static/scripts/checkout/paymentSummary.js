@@ -1,30 +1,27 @@
-import { getProduct } from '../../data/products.js';
-import { getDeliveryOption } from '../../data/deliveryOptions.js';
-import { formatCurrency } from '../utils/money.js';
+import { getProduct } from "../../data/products.js";
+import { getDeliveryOption } from "../../data/deliveryOptions.js";
+import { formatCurrency } from "../utils/money.js";
 
-export async function renderPaymentSummary(cartData){
+export async function renderPaymentSummary(cartData) {
+  let productPriceCents = 0;
+  let shippingPriceCents = 0;
 
-    let productPriceCents = 0;
-    let shippingPriceCents = 0;
+  for (const cartItem of cartData) {
+    const product = await getProduct(cartItem.productId);
+    console.log(product);
 
-    for (const cartItem of cartData) {
+    productPriceCents += product.priceCents * cartItem.quantity;
 
-        const product = await getProduct(cartItem.productId);
-        console.log(product);
+    const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
+    shippingPriceCents += deliveryOption.priceCents;
+  }
 
-        productPriceCents += product.priceCents * cartItem.quantity;
+  const totalBeforeTax = productPriceCents + shippingPriceCents;
+  const taxCents = 0.1 * totalBeforeTax;
 
-        const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
-        shippingPriceCents += deliveryOption.priceCents;
+  const totalCents = totalBeforeTax + taxCents;
 
-    }
-
-    const totalBeforeTax = productPriceCents + shippingPriceCents;
-    const taxCents = 0.1 * totalBeforeTax;
-
-    const totalCents = totalBeforeTax + taxCents;
-
-    const paymentSummaryHTML = `
+  const paymentSummaryHTML = `
         <div class="payment-summary-title">
             Order Summary
         </div>
@@ -58,6 +55,10 @@ export async function renderPaymentSummary(cartData){
             Place your order
         </button>`;
 
-    document.querySelector('.js-payment-summary').innerHTML = paymentSummaryHTML;
+  document.querySelector(".js-payment-summary").innerHTML = paymentSummaryHTML;
+  document.querySelector('.js-place-order-button').addEventListener('click',()=>{
+    
 
+    window.location.href = "/orders/"
+  })
 }

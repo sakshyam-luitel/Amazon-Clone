@@ -13,14 +13,14 @@ def products_data(request):
 
 
 def products(request):
-    products = Products.objects.all()
+    # products = Products.objects.all()
 
-    for product in products:
-        product.stars = int(product.stars * 10)
-        product.priceCents = round(float((product.priceCents)/100) , 2)
+    # for product in products:
+    #     product.stars = int(product.stars * 10)
+    #     product.priceCents = round(float((product.priceCents)/100) , 2)
 
-    context = {'products' : products}
-    return render(request , 'amazon.html' , context)
+    # context = {'products' : products}
+    return render(request , 'amazon.html')
 
 def checkout(request):
     return render(request , 'checkout.html')
@@ -39,4 +39,10 @@ def cart(request):
 
         return JsonResponse({'status': 'success'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def login(request):
+    return render(request , "login.html")
+
+def register(request):
+    return render(request , "register.html")
     

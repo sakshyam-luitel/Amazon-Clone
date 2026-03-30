@@ -67,6 +67,8 @@ def cart_details(request, pk):
         return Response(serializer.data , status = status.HTTP_200_OK)
 
 
+
+
     
     
 

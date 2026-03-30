@@ -23,4 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('amazon_app.urls')),
     path('api/v1/' , include('api.urls')),
+    path('api/auth/',include('dj_rest_auth.urls')),
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
