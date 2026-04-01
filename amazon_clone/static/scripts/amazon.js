@@ -1,34 +1,36 @@
-import {addToCart, calculateCartQuantity } from "../data/cart.js";
+import { addToCart, calculateCartQuantity } from "../data/cart.js";
 import { formatCurrency } from "./utils/money.js";
+import { getCookie } from "../data/cart.js";
+import { setupLogoutButton } from "./utils/auth.js";
 
-// const product = fetch("api/v1/products/").then((response) => {
-//   return response.json();
-// });
+setupLogoutButton();
 
-async function getProducts(){
-  try{
-    const response = await fetch('/api/v1/products/')
-    if(!response.ok){
-      console.log('Failed to fetch products data')
+const csrftoken = getCookie("csrftoken");
+
+async function getProducts() {
+  try {
+    const response = await fetch("/api/v1/products/");
+    if (!response.ok) {
+      console.log("Failed to fetch products data");
     }
-    const productsData = await response.json()
+    const productsData = await response.json();
 
-    return productsData
-  }catch(error){
-    console.log("Error:", error)
+    return productsData;
+  } catch (error) {
+    console.log("Error:", error);
   }
 }
 
-const totalCartQuantity = await calculateCartQuantity()
-document.querySelector('.js-cart-quantity').innerHTML = totalCartQuantity;
 
-const products = await getProducts()
-console.log(products)
+const totalCartQuantity = await calculateCartQuantity();
+document.querySelector(".js-cart-quantity").innerHTML = totalCartQuantity;
 
-// products.then((product) => {
-  let productsHTML = "";
-  products.forEach((product) => {
-    productsHTML += `<div class="product-container">
+const products = await getProducts();
+console.log(products);
+
+let productsHTML = "";
+products.forEach((product) => {
+  productsHTML += `<div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
               src="/static/${product.image}">
@@ -76,33 +78,34 @@ console.log(products)
             Add to Cart
           </button>
         </div>`;
+});
+
+document.querySelector(".js-products-grid").innerHTML = productsHTML;
+
+//multiple same buttons clicked differentiator
+document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const productId = button.dataset.productId;
+
+    const quantity = Number(
+      document.querySelector(`.js-product-quantity-selector-${productId}`)
+        .value,
+    );
+
+    await addToCart(productId, quantity, 1);
+
+    const totalCartQuantity = await calculateCartQuantity();
+    document.querySelector(".js-cart-quantity").innerHTML = totalCartQuantity;
+
+    const messageElement = document.querySelector(
+      `.js-added-to-cart-${productId}`,
+    );
+    messageElement.classList.add("added-to-cart-visible");
+
+    setTimeout(() => {
+      messageElement.classList.remove("added-to-cart-visible");
+    }, 2000);
   });
+});
 
-  document.querySelector(".js-products-grid").innerHTML = productsHTML;
 
-  //multiple same buttons clicked differentiator
-  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-    button.addEventListener("click", async () => {
-
-      const productId = button.dataset.productId;
-      
-      const quantity = Number(
-        document.querySelector(`.js-product-quantity-selector-${productId}`).value
-      );
-
-      await addToCart(productId, quantity, 1);
-
-      const totalCartQuantity= await calculateCartQuantity();
-      document.querySelector(".js-cart-quantity").innerHTML = totalCartQuantity;
-
-      const messageElement = document.querySelector(
-        `.js-added-to-cart-${productId}`,
-      );
-      messageElement.classList.add("added-to-cart-visible");
-
-      setTimeout(() => {
-        messageElement.classList.remove("added-to-cart-visible");
-      }, 2000);
-    });
-  });
-// });

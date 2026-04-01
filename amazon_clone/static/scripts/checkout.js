@@ -1,5 +1,8 @@
 import { renderOrderSummary } from "./checkout/orderSummary.js";
 import { renderPaymentSummary } from "./checkout/paymentSummary.js";
+import { setupLogoutButton } from "./utils/auth.js";
+
+setupLogoutButton();
 
 export async function getCartData(){
     try{
@@ -8,11 +11,12 @@ export async function getCartData(){
         throw new Error('Failed to fetch the cart data')
     }
     const cartData = await response.json()
+    console.log(cartData)
     await renderOrderSummary(cartData)
     renderPaymentSummary(cartData)
     }
     catch(error){
-        console.error('Error:', error)
+        console.log('Error:', error)
     }
 }
 

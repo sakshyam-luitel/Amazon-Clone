@@ -26,9 +26,9 @@ export async function addToCart(productId, quantity, deliveryOptionId) {
         "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({
-        productId: productId,
+        product_id: productId,
         quantity: quantity,
-        deliveryOptionId: deliveryOptionId,
+        delivery_option_id: deliveryOptionId,
       }),
     });
     if (!response.ok) {
@@ -100,7 +100,7 @@ export async function updateDeliveryOption(
 ) {
   let matchingItem;
   cartData.forEach((cartItem) => {
-    if (productId === cartItem.productId) {
+    if (productId === ((cartItem.productId || cartItem.product_id) || cartItem.product_id)) {
       matchingItem = cartItem;
     }
   });
@@ -108,14 +108,14 @@ export async function updateDeliveryOption(
   matchingItem.deliveryOptionId = deliveryOptionId;
   //saveToStorage();
   try {
-    const response = await fetch(`/api/v1/cart/${matchingItem.productId}/`, {
+    const response = await fetch(`/api/v1/cart/${((matchingItem.productId || matchingItem.product_id) || matchingItem.product_id)}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({
-        deliveryOptionId: deliveryOptionId,
+        delivery_option_id: deliveryOptionId,
       }),
     });
     if (!response.ok) {

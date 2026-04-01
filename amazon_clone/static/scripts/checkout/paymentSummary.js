@@ -7,12 +7,12 @@ export async function renderPaymentSummary(cartData) {
   let shippingPriceCents = 0;
 
   for (const cartItem of cartData) {
-    const product = await getProduct(cartItem.productId);
+    const product = await getProduct((cartItem.productId || cartItem.product_id));
     console.log(product);
 
     productPriceCents += product.priceCents * cartItem.quantity;
 
-    const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
+    const deliveryOption = getDeliveryOption((cartItem.deliveryOptionId || cartItem.delivery_option_id));
     shippingPriceCents += deliveryOption.priceCents;
   }
 

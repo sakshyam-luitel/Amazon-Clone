@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import Products,Cart
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes, api_view
 
 import json
 
@@ -11,7 +13,8 @@ def products_data(request):
 
     return JsonResponse(products, safe=False)
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def products(request):
     # products = Products.objects.all()
 
@@ -22,27 +25,26 @@ def products(request):
     # context = {'products' : products}
     return render(request , 'amazon.html')
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def checkout(request):
     return render(request , 'checkout.html')
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def orders(request):
     return render(request , 'orders.html')
 
-@csrf_exempt
-def cart(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        productId = data.get('productId')
-        quantity = data.get('quantity')
-        deliveryOptionId = data.get('deliveryOptionId')
-        cart = Cart.objects.create(productId = productId , quantity = quantity , deliveryOptionId = deliveryOptionId)
 
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def login(request):
     return render(request , "login.html")
 
 def register(request):
     return render(request , "register.html")
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tracking(request):
+    return render(request , "tracking.html")
     

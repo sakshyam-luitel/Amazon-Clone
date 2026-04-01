@@ -23,7 +23,7 @@ export async function renderOrderSummary(cartData) {
 
   // ✅ FIXED PART (forEach -> for...of)
   for (const cartItem of cartData) {
-    const productId = cartItem.productId;
+    const productId = (cartItem.productId || cartItem.product_id);
     const matchingProduct = await getProduct(productId);
 
     console.log(matchingProduct);
@@ -77,7 +77,7 @@ export async function renderOrderSummary(cartData) {
   document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
 
   function getDateString(cartItem) {
-    const deliveryOptionId = cartItem.deliveryOptionId;
+    const deliveryOptionId = (cartItem.deliveryOptionId || cartItem.delivery_option_id);
     const option = getDeliveryOption(deliveryOptionId);
 
     const today = dayjs();
@@ -99,7 +99,7 @@ export async function renderOrderSummary(cartData) {
           ? "FREE Shipping"
           : `$${formatCurrency(deliveryOption.priceCents)} - Shipping`;
 
-      const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
+      const isChecked = deliveryOption.id === (cartItem.deliveryOptionId || cartItem.delivery_option_id);
 
       html += `
     <div class="delivery-option js-delivery-option" data-product-id = "${matchingProduct.id}" data-delivery-option-id = "${deliveryOption.id}">
