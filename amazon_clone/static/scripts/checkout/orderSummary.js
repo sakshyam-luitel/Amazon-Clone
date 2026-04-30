@@ -26,8 +26,6 @@ export async function renderOrderSummary(cartData) {
     const productId = (cartItem.productId || cartItem.product_id);
     const matchingProduct = await getProduct(productId);
 
-    console.log(matchingProduct);
-
     cartSummaryHTML += `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
               Delivery date: ${getDateString(cartItem)}

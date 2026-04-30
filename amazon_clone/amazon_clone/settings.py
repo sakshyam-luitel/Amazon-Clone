@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-a)qdz9d9f0s!^lun)c4ra%_@y#p@y_bi$iwwudheb+n!@6lz)(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'vercel.app',
+    "localhost",
+    "127.0.0.1"
+]
 
 
 # Application definition
@@ -91,11 +95,11 @@ WSGI_APPLICATION = 'amazon_clone.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'amazonclone',
-        'PASSWORD' : '0Helloworld9$',
-        'USER' : 'root',
-        'HOST' : 'localhost',
-        'PORT' : '3306',
+        'NAME': os.environ.get('DB_NAME'),
+        'PASSWORD' : os.environ.get('DB_PASSWORD'),
+        'USER' : os.environ.get('DB_USER'),
+        'HOST' : os.environ.get('DB_HOST'),
+        'PORT' : os.environ.get('DB_PORT')
     }
 }
 

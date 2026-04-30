@@ -1,13 +1,15 @@
+import uuid
+
 from django.shortcuts import render
 #from django.views.decorators.csrf import csrf_exempt
-from .serializers import ProductsSerializer , CartSerializer
+from .serializers import ProductsSerializer , CartSerializer , OrderSerializer, OrderItemSerializer
 
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from amazon_app.models import Products , Cart
+from amazon_app.models import Products , Cart, Order, OrderItem
 
 # Create your views here.
 @api_view(['GET' ,  'POST'])
@@ -64,6 +66,36 @@ def cart_details(request, pk):
     elif request.method == "GET":
         serializer = CartSerializer(cart_data)
         return Response(serializer.data , status = status.HTTP_200_OK)
+    
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def order(request):
+    if request.method == "GET":
+        order = Order.objects.filter(user_id = request.user)
+        serializer = OrderSerializer(order, many=True)
+        return Response(serializer.data , status = status.HTTP_200_OK)
+    elif request.method == "POST":
+        serializer = OrderSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save(user_id = request.user , id = uuid.uuid4())
+            return Response(serializer.data , status = status.HTTP_201_CREATED)
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def order_items(request):
+    if request.method == 'GET':
+        order_data = OrderItem.objects.filter(order__user_id=request.user)
+        serializer = OrderItemSerializer(order_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == "POST":
+        serializer = OrderItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
