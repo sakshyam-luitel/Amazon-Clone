@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -27,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'vercel.app',
@@ -98,14 +99,18 @@ WSGI_APPLICATION = 'amazon_clone.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),
-        'PASSWORD' : os.environ.get('DB_PASSWORD'),
-        'USER' : os.environ.get('DB_USER'),
-        'HOST' : os.environ.get('DB_HOST'),
-        'PORT' : os.environ.get('DB_PORT'),
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.environ.get('DB_NAME'),
+    #     'PASSWORD' : os.environ.get('DB_PASSWORD'),
+    #     'USER' : os.environ.get('DB_USER'),
+    #     'HOST' : os.environ.get('DB_HOST'),
+    #     'PORT' : os.environ.get('DB_PORT'),
+    # }
+
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
