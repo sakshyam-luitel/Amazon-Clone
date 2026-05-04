@@ -80,8 +80,22 @@ def order(request):
             serializer.save(user_id = request.user , id = uuid.uuid4())
             return Response(serializer.data , status = status.HTTP_201_CREATED)
         return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
-    
 
+@api_view(["GET", "DELETE"])
+@permission_classes([IsAuthenticated])
+def order_details(request, pk):
+    try:
+        order_data = Order.objects.get(pk=pk, user_id=request.user)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        order_data.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'GET':
+        serializer = OrderSerializer(order_data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
 def order_items(request):
